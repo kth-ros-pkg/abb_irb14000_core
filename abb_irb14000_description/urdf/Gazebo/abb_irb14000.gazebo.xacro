@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+
+<robot name="abb_irb14000" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="abb_irb14000_gazebo" params="name">
+    <!-- Gazebo reference frame -->
+    <gazebo reference="${name}_body">
+      <material>Gazebo/Ivory</material>
+      <mu1>0.2</mu1>
+      <mu2>0.2</mu2>
+    </gazebo>
+  </xacro:macro>
+
+</robot>
+
