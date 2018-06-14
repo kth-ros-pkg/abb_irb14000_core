@@ -93,12 +93,10 @@ int main( int argc, char** argv )
 
   if(!use_egm)
   {
-      yumi_robot = new YumiHWRapid();
-      YumiHWRapid* yumi_robot_rapid = dynamic_cast<YumiHWRapid*>(yumi_robot);
-      yumi_robot_rapid->setup(ip);
-
-      float sampling_time = yumi_robot_rapid->getSampleTime();
-      ROS_INFO("No EGM. Sampling time on robot: %f", sampling_time);
+      yumi_robot = new YumiHwRws();
+      YumiHwRws* yumi_robot_rws = dynamic_cast<YumiHwRws*>(yumi_robot);
+      yumi_robot_rws->setup(ip);
+      ROS_INFO("Setting up connection to YuMi over RWS");
   }
   else
   {
@@ -108,7 +106,7 @@ int main( int argc, char** argv )
       std::stringstream port_ss;
       port_ss << port;
       yumi_robot_egm->setup(ip, port_ss.str());
-      ROS_INFO("Setting up EGM");
+      ROS_INFO("Setting up connection to YuMi over EGM");
     #else
       ROS_ERROR("YuMi EGM interface not available. RobotHW node will be stopped now.");
       return EXIT_FAILURE;
@@ -138,7 +136,7 @@ int main( int argc, char** argv )
   /* Main control loop */
   while( !g_quit )
   {
-    // get the time / period
+    // estimate the control period
     now = ros::Time::now();
     if (!clock_gettime(CLOCK_MONOTONIC, &ts))
     {
@@ -164,15 +162,12 @@ int main( int argc, char** argv )
 
     // std::cout << "Control loop period is " << period.toSec() * 1000 << " ms" << std::endl;
     control_period_pub.publish(period.toSec());
-
   }
 
   delete yumi_robot;
 
-  std::cerr<<"Stopping spinner..."<<std::endl;
+  ROS_INFO("Stopping asynchronous spinner...");
   spinner.stop();
-
-  std::cerr<<"Bye!"<<std::endl;
 
   return 0;
 }

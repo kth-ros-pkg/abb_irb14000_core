@@ -2,6 +2,7 @@
  * Software License Agreement (BSD License)
  *
  * Copyright (c) 2017, Francisco Vina, francisco.vinab@gmail.com
+ *               2018, Yoshua Nava, yoshua.nava.chocron@gmail.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,26 +30,21 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __YUMI_HW_EGM_H
-#define __YUMI_HW_EGM_H
+#ifndef YUMI_HW_EGM_H
+#define YUMI_HW_EGM_H
 
 #include <yumi_hw/yumi_hw.h>
 
 #include <boost/thread/mutex.hpp>
 #include <boost/thread.hpp>
-
 #include <boost/shared_ptr.hpp>
 
 #include <ros/ros.h>
 #include <abb_rws_interface/rws_interface_yumi.h>
 #include <abb_egm_interface/egm_interface_default.h>
 
-#ifndef N_YUMI_JOINTS
-#define N_YUMI_JOINTS 14
-#endif
-
 #ifndef MAX_NUMBER_OF_EGM_CONNECTIONS
-#define MAX_NUMBER_OF_EGM_CONNECTIONS 4
+  #define MAX_NUMBER_OF_EGM_CONNECTIONS 4
 #endif
 
 
@@ -63,8 +59,7 @@ class YumiEGMInterface
 
 public:
 
-
-  YumiEGMInterface();
+  YumiEGMInterface(const double& exponential_smoothing_alpha = 0.04);
 
   ~YumiEGMInterface();
 
@@ -270,4 +265,4 @@ private:
 };
 
 
-#endif
+#endif // YUMI_HW_EGM_H

@@ -2,6 +2,7 @@
  * Software License Agreement (BSD License)
  *
  * Copyright (c) 2017, Francisco Vina, francisco.vinab@gmail.com
+ *               2018, Yoshua Nava, yoshua.nava.chocron@gmail.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,8 +41,8 @@ using namespace abb::egm_interface;
 using namespace abb::rws_interface;
 
 
-YumiEGMInterface::YumiEGMInterface() :
-    has_params_(false), rws_connection_ready_(false)
+YumiEGMInterface::YumiEGMInterface() 
+  : has_params_(false), rws_connection_ready_(false)
 {
   left_arm_feedback_.reset(new proto::Feedback());
   left_arm_status_.reset(new proto::RobotStatus());
@@ -61,7 +62,6 @@ YumiEGMInterface::YumiEGMInterface() :
   getParams();
 
 }
-
 
 YumiEGMInterface::~YumiEGMInterface()
 {
@@ -114,7 +114,6 @@ void YumiEGMInterface::getParams()
 
   has_params_ = true;
 }
-
 
 bool YumiEGMInterface::init(const std::string& ip, const std::string& port)
 {
@@ -207,8 +206,8 @@ void YumiEGMInterface::initEGMJointStateMessage(google::protobuf::RepeatedField<
 }
 
 void YumiEGMInterface::copyEGMJointStateToArray(const google::protobuf::RepeatedField<double> &joint_states,
-                                                     const google::protobuf::RepeatedField<double> &external_joint_states,
-                                                     float* joint_array) const
+                                                const google::protobuf::RepeatedField<double> &external_joint_states,
+                                                float* joint_array) const
 {
   joint_array[0] = (float)joint_states.Get(0)*M_PI/180.0;
   joint_array[1] = (float)joint_states.Get(1)*M_PI/180.0;
@@ -220,7 +219,7 @@ void YumiEGMInterface::copyEGMJointStateToArray(const google::protobuf::Repeated
 }
 
 void YumiEGMInterface::copyEGMJointSpaceToArray(const proto::JointSpace &joint_space,
-                                                     float* joint_pos, float* joint_vel, float* joint_acc ) const
+                                                float* joint_pos, float* joint_vel, float* joint_acc ) const
 {
   copyEGMJointStateToArray(joint_space.position(), joint_space.external_position(), joint_pos);
   copyEGMJointStateToArray(joint_space.speed(), joint_space.external_speed(), joint_vel);
@@ -330,8 +329,6 @@ void YumiEGMInterface::setEGMParams(EGMData* egm_data)
   egm_data->setPosCorrGain(egm_params_.getPosCorrGain());
 }
 
-
-
 void YumiEGMInterface::configureEGM(boost::shared_ptr<EGMInterfaceDefault> egm_interface)
 {
   EGMInterfaceConfiguration configuration = egm_interface->getConfiguration();
@@ -411,7 +408,12 @@ bool YumiEGMInterface::stopEGM()
 //    }
 //}
 
-YumiHWEGM::YumiHWEGM() : YumiHW(), is_initialized_(false)
+
+
+
+YumiHWEGM::YumiHWEGM(const double& exponential_smoothing_alpha)
+  : YumiHW(exponential_smoothing_alpha), 
+    is_initialized_(false)
 {
 
 }
@@ -451,7 +453,7 @@ void YumiHWEGM::read(ros::Time time, ros::Duration period)
 {
   if(!is_initialized_)
   {
-      return;
+    return;
   }
 
   data_buffer_mutex_.lock();
@@ -467,7 +469,8 @@ void YumiHWEGM::read(ros::Time time, ros::Duration period)
     // joint_velocity_[j] = (joint_position_[j] - joint_position_prev_[j]) / period.toSec();
 
     // Estimation of joint velocity via finite differences method of first order and exponential smoothing
-    joint_velocity_[j] = filters::exponentialSmoothing((joint_position_[j]-joint_position_prev_[j])/period.toSec(), joint_velocity_[j], exponential_smoothing_alpha_);
+    joint_velocity_[j] = filters::exponentialSmoothing((joint_position_[j] - joint_position_prev_[j]) / period.toSec(),
+                                                       joint_velocity_[j], exponential_smoothing_alpha_);
   }
 
   data_buffer_mutex_.unlock();
@@ -478,7 +481,7 @@ void YumiHWEGM::write(ros::Time time, ros::Duration period)
 {
   if(!is_initialized_)
   {
-      return;
+    return;
   }
 
   enforceLimits(period);
@@ -487,7 +490,7 @@ void YumiHWEGM::write(ros::Time time, ros::Duration period)
 
   for (int j = 0; j < n_joints_; j++)
   {
-      joint_vel_targets_[j] = joint_velocity_command_[j];
+    joint_vel_targets_[j] = joint_velocity_command_[j];
   }
 
   yumi_egm_interface_.setJointVelTargets(joint_vel_targets_);

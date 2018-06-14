@@ -1,5 +1,5 @@
-#ifndef __YUMI_HW_H
-#define __YUMI_HW_H
+#ifndef YUMI_HW_H
+#define YUMI_HW_H
 
 // boost
 #include <boost/scoped_ptr.hpp>
@@ -27,6 +27,10 @@
 #include <kdl/chaindynparam.hpp> //this to compute the gravity verctor
 #include <kdl_parser/kdl_parser.hpp>
 
+#ifndef N_YUMI_JOINTS
+  #define N_YUMI_JOINTS 14
+#endif
+
 /**
   * Base class for yumi hw interface. Extended later for gazebo and for real robot over rapid
   */
@@ -34,31 +38,42 @@
 class YumiHW : public hardware_interface::RobotHW
 {
 public:
-  YumiHW()
-  {
-    n_joints_ = 14;
-  }
 
+  YumiHW(const double& exponential_smoothing_alpha = 0.04);
 
   virtual ~YumiHW() {}
 
   void create(std::string name, std::string urdf_string);
 
-  std::string robot_namespace_;
-
-  /* Robot Model from URDF */
-  std::string urdf_string_;
-  urdf::Model urdf_model_;
-
   /* Control strategies definition */
   /* JOINT_POSITION -> strategy 10 -> triggered with PoitionJointInterface */
   /* JOINT_VELOCITY -> strategy 15 -> triggered with VelJointInterface */
   /* JOINT_EFFORT -> strategy 20 -> TODO */
-  enum ControlStrategy {JOINT_POSITION = 10, JOINT_VELOCITY = 15, JOINT_EFFORT = 20};
+  enum ControlStrategy
+  {
+    JOINT_POSITION = 10,
+    JOINT_VELOCITY = 15,
+    JOINT_EFFORT = 20
+  };
 
   /* Control strategy get/set */
   ControlStrategy getControlStrategy(){ return current_strategy_;};
   void setControlStrategy( ControlStrategy strategy){current_strategy_ = strategy;};
+
+  // Before write, you can use this function to enforce limits for all values
+  void enforceLimits(ros::Duration period);
+
+    /* Set all members to default values */
+  void reset();
+
+  //TODO: KDL stuff is not implemented yet
+  // KDL stuff to compute ik, gravity term, etc.
+  /*
+  KDL::Chain yumi_chain_;
+  boost::scoped_ptr<KDL::ChainDynParam> f_dyn_solver_;
+  KDL::JntArray joint_position_kdl_, gravity_effort_;
+  KDL::Vector gravity_;
+  */
 
 
   /* RobotHW primitives */
@@ -66,10 +81,24 @@ public:
   virtual bool init() = 0;
   virtual void read(ros::Time time, ros::Duration period) = 0;
   virtual void write(ros::Time time, ros::Duration period) = 0;
-  virtual bool canSwitch(const std::list<hardware_interface::ControllerInfo> &start_list, const std::list<hardware_interface::ControllerInfo> &stop_list) const;
-  virtual void doSwitch(const std::list<hardware_interface::ControllerInfo> &start_list, const std::list<hardware_interface::ControllerInfo> &stop_list);
+  virtual bool canSwitch(const std::list<hardware_interface::ControllerInfo> &start_list, 
+                         const std::list<hardware_interface::ControllerInfo> &stop_list) const;
+  virtual void doSwitch(const std::list<hardware_interface::ControllerInfo> &start_list, 
+                        const std::list<hardware_interface::ControllerInfo> &stop_list);
 
 
+
+  std::string robot_namespace_;
+
+  /* Robot Model from URDF */
+  int n_joints_;
+  std::string urdf_string_;
+  urdf::Model urdf_model_;
+  std::vector<std::string> joint_names_;
+  double exponential_smoothing_alpha_;
+
+  /* Transmissions in this plugin's scope */
+  std::vector<transmission_interface::TransmissionInfo> transmissions_;
 
   /* Hardware interfaces */
   hardware_interface::JointStateInterface state_interface_;
@@ -87,13 +116,6 @@ public:
   joint_limits_interface::PositionJointSaturationInterface   pj_sat_interface_;
   joint_limits_interface::PositionJointSoftLimitsInterface   pj_limits_interface_;
 
-  // Before write, you can use this function to enforce limits for all values
-  void enforceLimits(ros::Duration period);
-
-  // configuration
-  int n_joints_; // all joints of yumi
-  std::vector<std::string> joint_names_;
-  double exponential_smoothing_alpha_;
 
   /* Joint limits */
   std::vector<double>
@@ -112,42 +134,28 @@ public:
     joint_position_command_,
     joint_velocity_command_;
 
-  /* Set all members to default values */
-  void reset();
 
-  /* Transmissions in this plugin's scope */
-  std::vector<transmission_interface::TransmissionInfo> transmissions_;
-
-  //TODO: KDL stuff is not implemented yet
-  // KDL stuff to compute ik, gravity term, etc.
-  /*
-  KDL::Chain yumi_chain_;
-  boost::scoped_ptr<KDL::ChainDynParam> f_dyn_solver_;
-  KDL::JntArray joint_position_kdl_, gravity_effort_;
-  KDL::Vector gravity_;
-  */
-
-  private:
-
+private:
   /* Get Transmissions from the URDF */
   bool parseTransmissionsFromURDF(const std::string& urdf_string);
 
   /* Register all interfaces */
   void registerInterfaces(const urdf::Model *const urdf_model,
-    std::vector<transmission_interface::TransmissionInfo> transmissions);
+                          std::vector<transmission_interface::TransmissionInfo> transmissions);
 
   /* Initialize all KDL members */
   // bool initKDLdescription(const urdf::Model *const urdf_model);
 
   /* Helper function to register limit interfaces */
   void registerJointLimits(const std::string& joint_name,
-    const hardware_interface::JointHandle& joint_handle_position,
-    const hardware_interface::JointHandle& joint_handle_velocity,
-    const urdf::Model *const urdf_model,
-    double *const lower_limit, double *const upper_limit);
+                          //  const hardware_interface::JointHandle& joint_handle_effort,
+                           const hardware_interface::JointHandle& joint_handle_position,
+                           const hardware_interface::JointHandle& joint_handle_velocity,
+                           const urdf::Model *const urdf_model,
+                           double *const lower_limit, double *const upper_limit);
 
 }; // class
 
 
 
-#endif
+#endif // YUMI_HW_H
