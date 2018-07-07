@@ -42,7 +42,8 @@ using namespace abb::rws_interface;
 
 
 YumiEGMInterface::YumiEGMInterface() 
-  : has_params_(false), rws_connection_ready_(false)
+  : has_params_(false), 
+    rws_connection_ready_(false)
 {
   left_arm_feedback_.reset(new proto::Feedback());
   left_arm_status_.reset(new proto::RobotStatus());

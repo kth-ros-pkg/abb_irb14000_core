@@ -6,8 +6,8 @@ add_definitions(-DROS=1)           # build using ROS libraries
 add_definitions(-DLINUXSOCKETS=1)  # build using LINUX SOCKETS libraries 
 
 find_package(Boost REQUIRED COMPONENTS system thread QUIET)
-find_package(abb_egm_interface QUIET) 
-find_package(abb_rws_interface QUIET)
+# find_package(abb_egm_interface QUIET) 
+# find_package(abb_rws_interface QUIET)
 LIST(APPEND CATKIN_DEPENDS_LIST 
   cmake_modules
   control_toolbox
@@ -23,26 +23,27 @@ LIST(APPEND CATKIN_DEPENDS_LIST
   transmission_interface
   urdf
   simple_message
+  abb_irb14000_msgs
 )
 
 
 if (abb_rws_interface_FOUND)
   message("--   ABB RWS library found!")
-  LIST(APPEND CATKIN_DEPENDS_LIST 
-    abb_rws_interface
-  )
+  # LIST(APPEND CATKIN_DEPENDS_LIST 
+  #   abb_rws_interface
+  # )
   if (abb_egm_interface_FOUND)
     message("--   ABB EGM library found!")
     message("--   All dependencies satisfied. The robot hardware interfaces (via EGM and industrial core sockets) will be built")
  
-    LIST(APPEND CATKIN_DEPENDS_LIST 
-      abb_egm_interface
-    )
-    LIST(APPEND SOURCEFILES
-      src/yumi_hw_egm.cpp
-    )
+    # LIST(APPEND CATKIN_DEPENDS_LIST 
+    #   abb_egm_interface
+    # )
+    # LIST(APPEND SOURCEFILES
+    #   src/yumi_hw/yumi_hw_egm.cpp
+    # )
  
-    add_definitions(-DHAVE_EGM=1)
+    # add_definitions(-DHAVE_EGM=1)
   else()
     message("--   ABB EGM library not found")
   endif()
@@ -56,8 +57,9 @@ endif()
 find_package(catkin REQUIRED COMPONENTS ${CATKIN_DEPENDS_LIST})
 
 LIST(APPEND SOURCEFILES
-  src/yumi_hw.cpp
-  src/yumi_hw_rws.cpp
+  src/yumi_hw/yumi_hw.cpp
+  src/yumi_hw/yumi_hw_rws.cpp
+  # src/yumi_hw/hw_iface_egm.cpp
 )
 
 catkin_package(
