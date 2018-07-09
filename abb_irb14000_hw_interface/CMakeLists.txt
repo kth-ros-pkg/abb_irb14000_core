@@ -10,21 +10,20 @@ find_package(abb_librws QUIET)
 find_package(abb_egm_interface QUIET)
 
 LIST(APPEND CATKIN_DEPENDS_LIST 
+  abb_irb14000_msgs
   cmake_modules
   control_toolbox
   controller_interface
   controller_manager
   hardware_interface
   joint_limits_interface
-  kdl_parser
   realtime_tools
   roscpp
+  simple_message
   std_msgs
   tf
   transmission_interface
   urdf
-  simple_message
-  abb_irb14000_msgs
 )
 
 

@@ -46,7 +46,8 @@ using namespace abb::rws;
 
 
 YumiEGMInterface::YumiEGMInterface(const double& exponential_smoothing_alpha)
-  : has_params_(false), 
+  :
+    has_params_(false),
     rws_connection_ready_(false)
 {
   left_arm_feedback_.reset(new proto::Feedback());
@@ -435,14 +436,11 @@ bool YumiEGMInterface::stopEGM()
 //}
 
 
-
-
 YumiHWEGM::YumiHWEGM(const double& exponential_smoothing_alpha)
-  : YumiHW(exponential_smoothing_alpha), 
+  : 
+    YumiHW(exponential_smoothing_alpha), 
     is_initialized_(false)
-{
-
-}
+{ }
 
 YumiHWEGM::~YumiHWEGM()
 {

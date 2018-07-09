@@ -20,13 +20,6 @@
 #include <joint_limits_interface/joint_limits_urdf.h>
 #include <control_toolbox/filters.h>
 
-// KDL
-#include <kdl/kdl.hpp>
-#include <kdl/tree.hpp>
-#include <kdl/chain.hpp>
-#include <kdl/chaindynparam.hpp> //this to compute the gravity verctor
-#include <kdl_parser/kdl_parser.hpp>
-
 #ifndef N_YUMI_JOINTS
   #define N_YUMI_JOINTS 14
 #endif
@@ -65,16 +58,6 @@ public:
 
     /* Set all members to default values */
   void reset();
-
-  //TODO: KDL stuff is not implemented yet
-  // KDL stuff to compute ik, gravity term, etc.
-  /*
-  KDL::Chain yumi_chain_;
-  boost::scoped_ptr<KDL::ChainDynParam> f_dyn_solver_;
-  KDL::JntArray joint_position_kdl_, gravity_effort_;
-  KDL::Vector gravity_;
-  */
-
 
   /* RobotHW primitives */
   /* This functions must be implemented depending on the outlet (Real, Gazebo, etc.) */
@@ -142,9 +125,6 @@ private:
   /* Register all interfaces */
   void registerInterfaces(const urdf::Model *const urdf_model,
                           std::vector<transmission_interface::TransmissionInfo> transmissions);
-
-  /* Initialize all KDL members */
-  // bool initKDLdescription(const urdf::Model *const urdf_model);
 
   /* Helper function to register limit interfaces */
   void registerJointLimits(const std::string& joint_name,

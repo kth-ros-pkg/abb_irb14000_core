@@ -143,8 +143,8 @@ bool YumiRwsInterface::init(std::string ip, int port)
 
   connection_ = &default_tcp_connection_;
   connection_->makeConnect();
-
   ROS_INFO("Connection established");
+
   // initialize message manager
   manager_.init(connection_);
 
@@ -195,7 +195,8 @@ void YumiRwsInterface::rwsCommThreadCallback()
 
 
 YumiHwRws::YumiHwRws(const double& exponential_smoothing_alpha)
-  : YumiHW(exponential_smoothing_alpha),
+  :
+    YumiHW(exponential_smoothing_alpha),
     is_initialized_(false),
     is_setup_(false),
     first_run_in_position_mode_(true)

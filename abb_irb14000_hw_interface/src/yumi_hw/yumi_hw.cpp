@@ -1,7 +1,8 @@
 #include<yumi_hw/yumi_hw.h>
 
 YumiHW::YumiHW(const double& exponential_smoothing_alpha)
-  : n_joints_(N_YUMI_JOINTS),
+  :
+    n_joints_(N_YUMI_JOINTS),
     exponential_smoothing_alpha_(exponential_smoothing_alpha)
 {
 
@@ -61,10 +62,6 @@ void YumiHW::create(std::string name, std::string urdf_string)
 
   const urdf::Model *const urdf_model_ptr = urdf_model_.initString(urdf_string_) ? &urdf_model_ : NULL;
   registerInterfaces(urdf_model_ptr, transmissions_);
-
-  //std::cout << "Initializing KDL variables..." << std::endl;
-  // INIT KDL STUFF
-  //initKDLdescription(urdf_model_ptr);
 
   ROS_INFO("Succesfully created an abstract Yumi with interfaces to ROS control");
 }
