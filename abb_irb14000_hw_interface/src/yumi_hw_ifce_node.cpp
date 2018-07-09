@@ -136,35 +136,35 @@ int main( int argc, char** argv )
   control_period_pub = yumi_nh.advertise<std_msgs::Float64>("/yumi/arms_control_period", 1000);
 
   /* Main control loop */
-  // while( !g_quit )
-  // {
-  //   // estimate the control period
-  //   now = ros::Time::now();
-  //   if (!clock_gettime(CLOCK_MONOTONIC, &ts))
-  //   {
-  //     curr.sec = ts.tv_sec;
-  //     curr.nsec = ts.tv_nsec;
-  //     period = curr - last;
-  //     last = curr;
-  //   } 
-  //   else
-  //   {
-  //     ROS_FATAL("Failed to poll realtime clock!");
-  //     break;
-  //   }
+  while( !g_quit )
+  {
+    // estimate the control period
+    now = ros::Time::now();
+    if (!clock_gettime(CLOCK_MONOTONIC, &ts))
+    {
+      curr.sec = ts.tv_sec;
+      curr.nsec = ts.tv_nsec;
+      period = curr - last;
+      last = curr;
+    } 
+    else
+    {
+      ROS_FATAL("Failed to poll realtime clock!");
+      break;
+    }
 
-  //   /* Read the state from YuMi */
-  //   yumi_robot->read(now, period);
+    /* Read the state from YuMi */
+    yumi_robot->read(now, period);
     
-  //   /* Update the controllers */
-  //   manager.update(now, period);
+    /* Update the controllers */
+    manager.update(now, period);
 
-  //   /* Write the command to YuMi */
-  //   yumi_robot->write(now, period);
+    /* Write the command to YuMi */
+    yumi_robot->write(now, period);
 
-  //   // std::cout << "Control loop period is " << period.toSec() * 1000 << " ms" << std::endl;
-  //   control_period_pub.publish(period.toSec());
-  // }
+    // std::cout << "Control loop period is " << period.toSec() * 1000 << " ms" << std::endl;
+    control_period_pub.publish(period.toSec());
+  }
 
   ROS_INFO("Stopping asynchronous spinner...");
   spinner.stop();

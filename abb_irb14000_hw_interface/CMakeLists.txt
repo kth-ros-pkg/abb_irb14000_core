@@ -8,7 +8,6 @@ add_definitions(-DLINUXSOCKETS=1)  # build using LINUX SOCKETS libraries
 find_package(Boost REQUIRED COMPONENTS system thread QUIET)
 find_package(abb_librws QUIET)
 find_package(abb_egm_interface QUIET)
-find_package(abb_rws_interface QUIET)
 
 LIST(APPEND CATKIN_DEPENDS_LIST 
   cmake_modules
@@ -33,7 +32,6 @@ if (abb_librws_FOUND)
   message("--   ABB RWS library found!")
   LIST(APPEND CATKIN_DEPENDS_LIST 
     abb_librws
-    abb_rws_interface
   )
   if (abb_egm_interface_FOUND)
     message("--   ABB EGM library found!")
