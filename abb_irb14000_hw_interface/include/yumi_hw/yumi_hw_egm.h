@@ -33,23 +33,25 @@
 #ifndef YUMI_HW_EGM_H
 #define YUMI_HW_EGM_H
 
-#include <yumi_hw/yumi_hw.h>
+#include "yumi_hw/yumi_hw.h"
 
 #include <boost/thread/mutex.hpp>
 #include <boost/thread.hpp>
 #include <boost/shared_ptr.hpp>
 
 #include <ros/ros.h>
-#include <abb_rws_interface/rws_interface_yumi.h>
+#include <abb_rws_interface/rws_interface_common.h>
 #include <abb_egm_interface/egm_interface_default.h>
+#include "abb_librws/rws_interface.h"
+#include "abb_librws/rws_simple_state_machine_interface.h"
+
 
 #ifndef MAX_NUMBER_OF_EGM_CONNECTIONS
   #define MAX_NUMBER_OF_EGM_CONNECTIONS 4
 #endif
 
-
 using namespace abb::egm_interface;
-using namespace abb::rws_interface;
+using namespace abb::rws;
 
 // Wrapper class for setting up EGM and RWS connections to the Yumi robot
 // with their corresponding IO service threads
@@ -90,7 +92,7 @@ public:
   /** \brief Initializes EGM + RWS connection to the robot
    *
    */
-  bool init(const std::string& ip, const std::string& port);
+  bool init(const std::string& ip, const unsigned short& port);
 
   bool stop();
 
@@ -181,27 +183,28 @@ protected:
    */
   bool sendEGMParams();
 
-  void setEGMParams(EGMData* egm_data);
+  // void setEGMParams(EGMData* egm_data);
 
-  void configureEGM(boost::shared_ptr<EGMInterfaceDefault> egm_interface);
+  // void configureEGM(boost::shared_ptr<EGMInterfaceDefault> egm_interface);
 
-  bool startEGM();
+  // bool startEGM();
 
-  bool stopEGM();
+  // bool stopEGM();
 
 
   /* RWS */
   // RWS interface which uses TCP communication for starting the EGM joint mode on YuMi
-  boost::shared_ptr<RWSInterfaceYuMi> rws_interface_;
+  // boost::shared_ptr<RWSInterfaceYuMi> rws_interface_;
+  boost::shared_ptr<RWSSimpleStateMachineInterface> rws_interface_;
 
   // RWS connection parameters
-  std::string rws_ip_, rws_port_;
+  std::string rws_ip_;
+  unsigned short rws_port_;
   double rws_delay_time_;
   int rws_max_signal_retries_;
   bool rws_connection_ready_;
 
   /* EGM */
-
   // EGM interface which uses UDP communication for realtime robot control @ 250 Hz
   boost::shared_ptr<EGMInterfaceDefault> left_arm_egm_interface_;
   boost::shared_ptr<EGMInterfaceDefault> right_arm_egm_interface_;
@@ -221,7 +224,7 @@ protected:
   boost::asio::io_service io_service_;
   boost::thread_group io_service_threads_;
 
-  EGMData egm_params_;
+  abb::rws_interface::EGMData egm_params_;
 
   double max_joint_velocity_;
 
@@ -233,7 +236,7 @@ protected:
 class YumiHWEGM : public YumiHW
 {
 public:
-  YumiHWEGM();
+  YumiHWEGM(const double& exponential_smoothing_alpha = 0.04);
 
   ~YumiHWEGM();
 
@@ -253,7 +256,8 @@ private:
 
   boost::mutex data_buffer_mutex_;
 
-  std::string ip_, port_;
+  std::string ip_;
+  unsigned short port_;
 
   // command buffers
   float joint_vel_targets_[N_YUMI_JOINTS];

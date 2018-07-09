@@ -93,14 +93,16 @@ int main( int argc, char** argv )
 
   if(!use_egm)
   {
-      yumi_robot = new YumiHwRws();
-      YumiHwRws* yumi_robot_rws = dynamic_cast<YumiHwRws*>(yumi_robot);
-      yumi_robot_rws->setup(ip);
-      ROS_INFO("Setting up connection to YuMi over RWS");
+      ROS_INFO("Use RWS");
+    yumi_robot = new YumiHwRws();
+    YumiHwRws* yumi_robot_rws = dynamic_cast<YumiHwRws*>(yumi_robot);
+    yumi_robot_rws->setup(ip);
+    ROS_INFO("Setting up connection to YuMi over RWS");
   }
   else
   {
     #ifdef HAVE_EGM
+        ROS_INFO("Use EGM");
       yumi_robot = new YumiHWEGM();
       YumiHWEGM* yumi_robot_egm = dynamic_cast<YumiHWEGM*>(yumi_robot);
       std::stringstream port_ss;
@@ -134,40 +136,40 @@ int main( int argc, char** argv )
   control_period_pub = yumi_nh.advertise<std_msgs::Float64>("/yumi/arms_control_period", 1000);
 
   /* Main control loop */
-  while( !g_quit )
-  {
-    // estimate the control period
-    now = ros::Time::now();
-    if (!clock_gettime(CLOCK_MONOTONIC, &ts))
-    {
-      curr.sec = ts.tv_sec;
-      curr.nsec = ts.tv_nsec;
-      period = curr - last;
-      last = curr;
-    } 
-    else
-    {
-      ROS_FATAL("Failed to poll realtime clock!");
-      break;
-    }
+  // while( !g_quit )
+  // {
+  //   // estimate the control period
+  //   now = ros::Time::now();
+  //   if (!clock_gettime(CLOCK_MONOTONIC, &ts))
+  //   {
+  //     curr.sec = ts.tv_sec;
+  //     curr.nsec = ts.tv_nsec;
+  //     period = curr - last;
+  //     last = curr;
+  //   } 
+  //   else
+  //   {
+  //     ROS_FATAL("Failed to poll realtime clock!");
+  //     break;
+  //   }
 
-    /* Read the state from YuMi */
-    yumi_robot->read(now, period);
+  //   /* Read the state from YuMi */
+  //   yumi_robot->read(now, period);
     
-    /* Update the controllers */
-    manager.update(now, period);
+  //   /* Update the controllers */
+  //   manager.update(now, period);
 
-    /* Write the command to YuMi */
-    yumi_robot->write(now, period);
+  //   /* Write the command to YuMi */
+  //   yumi_robot->write(now, period);
 
-    // std::cout << "Control loop period is " << period.toSec() * 1000 << " ms" << std::endl;
-    control_period_pub.publish(period.toSec());
-  }
-
-  delete yumi_robot;
+  //   // std::cout << "Control loop period is " << period.toSec() * 1000 << " ms" << std::endl;
+  //   control_period_pub.publish(period.toSec());
+  // }
 
   ROS_INFO("Stopping asynchronous spinner...");
   spinner.stop();
+
+  // delete yumi_robot;
 
   return 0;
 }

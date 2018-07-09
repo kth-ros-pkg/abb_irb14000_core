@@ -22,7 +22,7 @@
 
     <!-- Calls to yumi_hw members -->
     <!-- The real hardware interface -->
-    <node required="true" name="yumi_hw" pkg="abb_irb14000_hw_interface" type="yumi_hw_ifce_node" respawn="false" ns="/yumi" output="screen"> 
+    <node required="true" name="yumi_hw" pkg="abb_irb14000_hw_interface" type="yumi_hw_ifce_node" respawn="false" ns="/yumi" output="screen">
         <param name="name" value="$(arg name)" />
         <param name="ip" value="$(arg ip)"/>
         <param name="port" value="$(arg port)"/>
@@ -30,10 +30,10 @@
     </node>
      
     <!-- The grippers hardware interface -->
-    <node required="true" name="yumi_gripper" pkg="abb_irb14000_hw_interface" type="yumi_gripper_node" respawn="false" ns="/yumi" output="screen"> 
+<!--     <node required="true" name="yumi_gripper" pkg="abb_irb14000_hw_interface" type="yumi_gripper_node" respawn="false" ns="/yumi" output="screen"> 
         <param name="ip" value="$(arg ip)"/>
     </node>
-
+ -->
 
 </launch>
 
