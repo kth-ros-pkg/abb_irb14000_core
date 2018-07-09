@@ -10,5 +10,7 @@
   <license>BSD</license>
 
   <buildtool_depend>catkin</buildtool_depend>
-  <run_depend>xacro</run_depend>
+  <build_depend>roslaunch</build_depend>
+
+  <run_depend>roslaunch</run_depend>
 </package>
