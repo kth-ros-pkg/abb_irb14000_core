@@ -161,10 +161,6 @@ public:
     value_to_msg = right;
     data.load(value_to_msg);
 
-    std::cout << "Gripper commands (left and right):" << std::endl;
-    std::cout << left << std::endl;
-    std::cout << right << std::endl;
-
     grasp_msg.init(MSG_TYPE_GRIPPER_COMMAND, industrial::simple_message::CommTypes::TOPIC, industrial::simple_message::ReplyTypes::INVALID, data);
     connection_command->sendMsg(grasp_msg);
   }
@@ -266,10 +262,6 @@ private:
       right = default_force;
     }
 
-    // std::cout << "Gripper commands (left and right):" << std::endl;
-    // std::cout << left << std::endl;
-    // std::cout << right << std::endl;
-
     gripper_interface.setGripperEfforts(left,right);
     return true;
   }
@@ -285,10 +277,6 @@ private:
     {
       right = -default_force;
     }
-
-    // std::cout << "Gripper commands (left and right):" << std::endl;
-    // std::cout << left << std::endl;
-    // std::cout << right << std::endl;
 
     gripper_interface.setGripperEfforts(left,right);
     return true;
