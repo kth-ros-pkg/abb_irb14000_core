@@ -6,30 +6,31 @@ add_definitions(-DROS=1)           # build using ROS libraries
 add_definitions(-DLINUXSOCKETS=1)  # build using LINUX SOCKETS libraries 
 
 find_package(Boost REQUIRED COMPONENTS system thread QUIET)
-find_package(abb_egm_interface QUIET) 
-find_package(abb_rws_interface QUIET)
+find_package(abb_librws QUIET)
+find_package(abb_egm_interface QUIET)
+
 LIST(APPEND CATKIN_DEPENDS_LIST 
+  abb_irb14000_msgs
   cmake_modules
   control_toolbox
   controller_interface
   controller_manager
   hardware_interface
   joint_limits_interface
-  kdl_parser
   realtime_tools
   roscpp
+  simple_message
   std_msgs
   tf
   transmission_interface
   urdf
-  simple_message
 )
 
 
-if (abb_rws_interface_FOUND)
+if (abb_librws_FOUND)
   message("--   ABB RWS library found!")
   LIST(APPEND CATKIN_DEPENDS_LIST 
-    abb_rws_interface
+    abb_librws
   )
   if (abb_egm_interface_FOUND)
     message("--   ABB EGM library found!")
@@ -39,7 +40,7 @@ if (abb_rws_interface_FOUND)
       abb_egm_interface
     )
     LIST(APPEND SOURCEFILES
-      src/yumi_hw_egm.cpp
+      src/yumi_hw/yumi_hw_egm.cpp
     )
  
     add_definitions(-DHAVE_EGM=1)
@@ -56,8 +57,9 @@ endif()
 find_package(catkin REQUIRED COMPONENTS ${CATKIN_DEPENDS_LIST})
 
 LIST(APPEND SOURCEFILES
-  src/yumi_hw.cpp
-  src/yumi_hw_rws.cpp
+  src/yumi_hw/yumi_hw.cpp
+  src/yumi_hw/yumi_hw_rws.cpp
+  src/yumi_hw/yumi_hw_egm.cpp
 )
 
 catkin_package(

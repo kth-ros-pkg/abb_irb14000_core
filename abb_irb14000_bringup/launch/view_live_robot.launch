@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<launch> 
+    
+  <arg name="grippers" default="false" />
+
+  <!-- ROS controllers -->
+  <include file="$(find abb_irb14000_bringup)/launch/controllers.launch"/>
+
+  <!-- The arms hardware interface -->
+  <include file="$(find abb_irb14000_bringup)/launch/arms_hw_interface.launch"/>
+
+  <!-- The grippers hardware interface (optional)-->
+  <group if="$(arg grippers)">
+  	<include file="$(find abb_irb14000_bringup)/launch/grippers.launch"/>
+  </group>
+
+  <!-- rviz perspective -->
+  <node name="yumi_joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" >
+        <rosparam param="source_list">["/yumi/joint_states", "/yumi/gripper_states"]</rosparam>
+  </node>
+  <node name="abb_irb14000_robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find abb_irb14000_bringup)/abb_irb14000_base.rviz"/>
+
+</launch>
+

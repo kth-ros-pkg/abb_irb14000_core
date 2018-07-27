@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch> 
+    
+    <!-- The grippers hardware interface -->
+    <node required="true" name="yumi_gripper" pkg="abb_irb14000_hw_interface" type="yumi_gripper_node" respawn="false" ns="/yumi" output="screen"> 
+        <param name="ip" value="$(arg ip)"/>
+    </node>
+
+
+</launch>
+

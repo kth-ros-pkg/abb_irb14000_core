@@ -1,7 +1,7 @@
 #include <ros/ros.h>
 #include <ros/console.h>
 
-#include <yumi_hw/yumi_gripper_node.h>
+#include "yumi_gripper_node.h"
 
 
 /*! Main method of the yumi_rws_gripper_node file. (testing doxygen)

@@ -5,16 +5,17 @@
 #include <boost/thread.hpp>
 
 #include <ros/ros.h>
-#include "simple_message/message_handler.h"
-#include "simple_message/message_manager.h"
-#include "simple_message/messages/joint_message.h"
-#include "simple_message/smpl_msg_connection.h"
-#include "simple_message/socket/tcp_socket.h"
-#include "simple_message/socket/tcp_client.h"
 #include <sensor_msgs/JointState.h>
 #include <std_msgs/Float64.h>
+#include <simple_message/message_handler.h>
+#include <simple_message/message_manager.h>
+#include <simple_message/messages/joint_message.h>
+#include <simple_message/smpl_msg_connection.h>
+#include <simple_message/socket/tcp_socket.h>
+#include <simple_message/socket/tcp_client.h>
 
-#include <abb_irb14000_msgs/YumiGrasp.h>
+#include "abb_irb14000_msgs/YumiGrasp.h"
+
 
 #define MSG_TYPE_GRIPPER_COMMAND 8008
 #define MSG_TYPE_GRIPPER_STATE 8009
@@ -160,10 +161,6 @@ public:
     value_to_msg = right;
     data.load(value_to_msg);
 
-    std::cout << "Gripper commands (left and right):" << std::endl;
-    std::cout << left << std::endl;
-    std::cout << right << std::endl;
-
     grasp_msg.init(MSG_TYPE_GRIPPER_COMMAND, industrial::simple_message::CommTypes::TOPIC, industrial::simple_message::ReplyTypes::INVALID, data);
     connection_command->sendMsg(grasp_msg);
   }
@@ -265,10 +262,6 @@ private:
       right = default_force;
     }
 
-    // std::cout << "Gripper commands (left and right):" << std::endl;
-    // std::cout << left << std::endl;
-    // std::cout << right << std::endl;
-
     gripper_interface.setGripperEfforts(left,right);
     return true;
   }
@@ -284,10 +277,6 @@ private:
     {
       right = -default_force;
     }
-
-    // std::cout << "Gripper commands (left and right):" << std::endl;
-    // std::cout << left << std::endl;
-    // std::cout << right << std::endl;
 
     gripper_interface.setGripperEfforts(left,right);
     return true;

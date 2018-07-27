@@ -16,7 +16,6 @@
   <build_depend>controller_manager</build_depend>
   <build_depend>hardware_interface</build_depend>
   <build_depend>joint_limits_interface</build_depend>
-  <build_depend>kdl_parser</build_depend>
   <build_depend>realtime_tools</build_depend>
   <build_depend>roscpp</build_depend>
   <build_depend>std_msgs</build_depend>
@@ -24,9 +23,10 @@
   <build_depend>transmission_interface</build_depend>
   <build_depend>urdf</build_depend>
   <build_depend>simple_message</build_depend>
-  <build_depend>abb_egm_interface</build_depend>
-  <build_depend>abb_rws_interface</build_depend>
   <build_depend>abb_irb14000_msgs</build_depend>
+  <build_depend>abb_librws</build_depend>
+  <build_depend>abb_egm_interface</build_depend>
+  
 
   <run_depend>cmake_modules</run_depend>
   <run_depend>control_toolbox</run_depend>
@@ -34,7 +34,6 @@
   <run_depend>controller_manager</run_depend>
   <run_depend>hardware_interface</run_depend>
   <run_depend>joint_limits_interface</run_depend>
-  <run_depend>kdl_parser</run_depend>
   <run_depend>realtime_tools</run_depend>
   <run_depend>roscpp</run_depend>
   <run_depend>std_msgs</run_depend>
@@ -42,9 +41,9 @@
   <run_depend>transmission_interface</run_depend>
   <run_depend>urdf</run_depend>
   <run_depend>simple_message</run_depend>
-  <run_depend>abb_egm_interface</run_depend>
-  <run_depend>abb_rws_interface</run_depend>
   <run_depend>abb_irb14000_msgs</run_depend>
+  <run_depend>abb_librws</run_depend>
+  <run_depend>abb_egm_interface</run_depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

@@ -1,5 +1,13 @@
 #include<yumi_hw/yumi_hw.h>
 
+YumiHW::YumiHW(const double& exponential_smoothing_alpha)
+  :
+    n_joints_(N_YUMI_JOINTS),
+    exponential_smoothing_alpha_(exponential_smoothing_alpha)
+{
+
+}
+
 void YumiHW::create(std::string name, std::string urdf_string)
 {
   ROS_INFO_STREAM("Creating a Yumi HW interface for: " << name <<" with "<<n_joints_<<" joints");
@@ -46,18 +54,14 @@ void YumiHW::create(std::string name, std::string urdf_string)
   /* GET TRANSMISSIONS THAT BELONG TO YUMI */
   if (!parseTransmissionsFromURDF(urdf_string_))
   {
-  ROS_ERROR("Error parsing URDF in yumi_hw.");
-  return;
+    ROS_ERROR("Error parsing URDF in yumi_hw.");
+    return;
   }
 
   ROS_INFO("Registering interfaces...");
 
   const urdf::Model *const urdf_model_ptr = urdf_model_.initString(urdf_string_) ? &urdf_model_ : NULL;
   registerInterfaces(urdf_model_ptr, transmissions_);
-
-  //std::cout << "Initializing KDL variables..." << std::endl;
-  // INIT KDL STUFF
-  //initKDLdescription(urdf_model_ptr);
 
   ROS_INFO("Succesfully created an abstract Yumi with interfaces to ROS control");
 }
@@ -67,13 +71,13 @@ void YumiHW::reset()
 {
   for (int j = 0; j < n_joints_; ++j)
   {
-  joint_position_[j] = 0.0;
-  joint_position_prev_[j] = 0.0;
-  joint_velocity_[j] = 0.0;
-  joint_effort_[j] = 0.0;
+    joint_position_[j] = 0.0;
+    joint_position_prev_[j] = 0.0;
+    joint_velocity_[j] = 0.0;
+    joint_effort_[j] = 0.0;
 
-  joint_position_command_[j] = 0.0;
-  joint_velocity_command_[j] = 0.0;
+    joint_position_command_[j] = 0.0;
+    joint_velocity_command_[j] = 0.0;
   }
 
   current_strategy_ = JOINT_POSITION;
@@ -81,8 +85,8 @@ void YumiHW::reset()
   return;
 }
 
-
-void YumiHW::registerInterfaces(const urdf::Model *const urdf_model, std::vector<transmission_interface::TransmissionInfo> transmissions)
+void YumiHW::registerInterfaces(const urdf::Model *const urdf_model, 
+                                std::vector<transmission_interface::TransmissionInfo> transmissions)
 {
 
   // Check that this transmission has one joint
@@ -166,11 +170,11 @@ void YumiHW::registerInterfaces(const urdf::Model *const urdf_model, std::vector
 // retrieved from the urdf_model.
 // Return the joint's type, lower position limit, upper position limit, and effort limit.
 void YumiHW::registerJointLimits(const std::string& joint_name,
-  //const hardware_interface::JointHandle& joint_handle_effort,
-  const hardware_interface::JointHandle& joint_handle_position,
-  const hardware_interface::JointHandle& joint_handle_velocity,
-  const urdf::Model *const urdf_model,
-  double *const lower_limit, double *const upper_limit)
+                                 //const hardware_interface::JointHandle& joint_handle_effort,
+                                 const hardware_interface::JointHandle& joint_handle_position,
+                                 const hardware_interface::JointHandle& joint_handle_velocity,
+                                 const urdf::Model *const urdf_model,
+                                 double *const lower_limit, double *const upper_limit)
 {
   *lower_limit = -std::numeric_limits<double>::max();
   *upper_limit = std::numeric_limits<double>::max();
@@ -259,7 +263,8 @@ bool YumiHW::parseTransmissionsFromURDF(const std::string& urdf_string)
 #endif
 
 
-bool YumiHW::canSwitch(const std::list<hardware_interface::ControllerInfo> &start_list, const std::list<hardware_interface::ControllerInfo> &stop_list) const
+bool YumiHW::canSwitch(const std::list<hardware_interface::ControllerInfo> &start_list,
+                       const std::list<hardware_interface::ControllerInfo> &stop_list) const
 {
   std::vector<ControlStrategy> desired_strategies;
 
@@ -298,7 +303,8 @@ bool YumiHW::canSwitch(const std::list<hardware_interface::ControllerInfo> &star
 
 
 
-void YumiHW::doSwitch(const std::list<hardware_interface::ControllerInfo> &start_list, const std::list<hardware_interface::ControllerInfo> &stop_list)
+void YumiHW::doSwitch(const std::list<hardware_interface::ControllerInfo> &start_list, 
+                      const std::list<hardware_interface::ControllerInfo> &stop_list)
 {
   ControlStrategy desired_strategy = JOINT_POSITION; // default
 
